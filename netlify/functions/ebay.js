@@ -35,7 +35,7 @@ exports.handler = async function(event) {
         let data = '';
         res.on('data', chunk => { data += chunk; });
         res.on('end', () => {
-          try { resolve(JSON.parse(data)); } catch(e) { reject(new Error('Token parse error: ' + data)); }
+          try { resolve(JSON.parse(data)); } catch(e) { reject(new Error('Token error: ' + data)); }
         });
       });
       req.on('error', reject);
@@ -47,33 +47,52 @@ exports.handler = async function(event) {
       throw new Error('No access token: ' + JSON.stringify(tokenResponse));
     }
 
-    // Use seller filter with a broad search query
-    const searchResponse = await new Promise((resolve, reject) => {
-      const path = '/buy/browse/v1/item_summary/search?q=drone+xbox+bushnell&filter=sellers%3Aelliohaydo_0&limit=50';
+    // Search each category and collect results from your seller
+    const searches = [
+      'DJI drone',
+      'Xbox console controller',
+      'Bushnell rangefinder golf'
+    ];
 
-      const options = {
-        hostname: 'api.ebay.com',
-        path: path,
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${tokenResponse.access_token}`,
-          'X-EBAY-C-MARKETPLACE-ID': 'EBAY_GB',
-          'Content-Type': 'application/json'
-        }
-      };
+    const allItems = [];
 
-      const req = https.request(options, (res) => {
-        let data = '';
-        console.log('Browse API status:', res.statusCode);
-        res.on('data', chunk => { data += chunk; });
-        res.on('end', () => {
-          console.log('Browse response:', data.substring(0, 800));
-          resolve(data);
+    for (const query of searches) {
+      const encoded = encodeURIComponent(query);
+      const path = `/buy/browse/v1/item_summary/search?q=${encoded}&limit=20&filter=itemLocationCountry%3AGB`;
+
+      const result = await new Promise((resolve, reject) => {
+        const options = {
+          hostname: 'api.ebay.com',
+          path: path,
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${tokenResponse.access_token}`,
+            'X-EBAY-C-MARKETPLACE-ID': 'EBAY_GB',
+            'Content-Type': 'application/json'
+          }
+        };
+        const req = https.request(options, (res) => {
+          let data = '';
+          res.on('data', chunk => { data += chunk; });
+          res.on('end', () => {
+            try { resolve(JSON.parse(data)); } catch(e) { resolve({}); }
+          });
         });
+        req.on('error', () => resolve({}));
+        req.end();
       });
-      req.on('error', reject);
-      req.end();
-    });
+
+      if (result.itemSummaries) {
+        // Filter to only items from your seller account
+        const sellerItems = result.itemSummaries.filter(item => 
+          item.seller && item.seller.username && 
+          item.seller.username.toLowerCase() === 'elliohaydo_0'
+        );
+        allItems.push(...sellerItems);
+      }
+    }
+
+    console.log('Total items found:', allItems.length);
 
     return {
       statusCode: 200,
@@ -81,7 +100,7 @@ exports.handler = async function(event) {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json'
       },
-      body: searchResponse
+      body: JSON.stringify({ itemSummaries: allItems })
     };
 
   } catch (err) {
