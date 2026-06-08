@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EHTF Sells — Premium Tech & Golf</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f8f7f4; --surface: #ffffff; --border: #e8e4de; --border-dark: #d0cbc2;
+      --accent: #1a1a2e; --accent2: #c8952a; --text: #1a1a1a; --muted: #6b6560; --mid: #9a9490;
+      --tag-drone: #e8f0fe; --tag-drone-text: #1a56db;
+      --tag-gaming: #fce8f3; --tag-gaming-text: #9d174d;
+      --tag-golf: #def7ec; --tag-golf-text: #03543f;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; }
+
+    /* HEADER */
+    header { border-bottom: 1px solid var(--border); padding: 0 48px; display: flex; align-items: center; justify-content: space-between; height: 72px; position: sticky; top: 0; background: rgba(248,247,244,0.97); backdrop-filter: blur(16px); z-index: 100; }
+    .logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+    .logo-dot { width: 8px; height: 8px; background: var(--accent2); border-radius: 50%; flex-shrink: 0; }
+    nav { display: flex; gap: 36px; align-items: center; }
+    nav a { font-size: 0.82rem; font-weight: 500; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    nav a:hover { color: var(--accent); }
+    .nav-dropdown { position: relative; }
+    .nav-dropdown-trigger { font-size: 0.82rem; font-weight: 500; color: var(--muted); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: color 0.2s; padding: 0; font-family: 'Inter', sans-serif; }
+    .nav-dropdown-trigger:hover, .nav-dropdown.open .nav-dropdown-trigger { color: var(--accent); }
+    .chevron { width: 6px; height: 6px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); margin-top: -3px; transition: transform 0.2s; }
+    .nav-dropdown.open .chevron { transform: rotate(225deg); margin-top: 2px; }
+    .nav-dropdown-menu { position: absolute; top: calc(100% + 16px); left: 50%; transform: translateX(-50%); background: var(--surface); border: 1px solid var(--border); border-radius: 12px; min-width: 200px; display: none; flex-direction: column; z-index: 200; box-shadow: 0 8px 32px rgba(0,0,0,0.10); overflow: hidden; }
+    .nav-dropdown.open .nav-dropdown-menu { display: flex; }
+    .nav-dropdown-menu a { font-size: 0.82rem; font-weight: 500; color: var(--muted); text-decoration: none; padding: 13px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; transition: all 0.15s; }
+    .nav-dropdown-menu a:last-child { border-bottom: none; }
+    .nav-dropdown-menu a:hover { color: var(--accent); background: var(--bg); }
+    .dd-icon { font-size: 1.1rem; }
+    .ebay-btn { font-size: 0.82rem; font-weight: 600; color: var(--accent2) !important; border: 1.5px solid var(--accent2); padding: 7px 16px; border-radius: 6px; transition: all 0.2s !important; }
+    .ebay-btn:hover { background: var(--accent2) !important; color: #fff !important; }
+    .contact-btn { background: var(--accent); color: #fff !important; padding: 8px 20px; border-radius: 6px; font-weight: 600; font-size: 0.82rem; transition: opacity 0.2s !important; }
+    .contact-btn:hover { opacity: 0.85 !important; }
+
+    /* HERO */
+    .hero { padding: 80px 48px 72px; max-width: 1300px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .hero-tag { display: inline-flex; align-items: center; gap: 8px; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent2); background: #fdf3e3; border: 1px solid #f0d9a8; padding: 5px 12px; border-radius: 20px; margin-bottom: 28px; }
+    .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.8rem, 5vw, 4.2rem); font-weight: 700; line-height: 1.1; color: var(--accent); margin-bottom: 20px; }
+    .hero h1 em { color: var(--accent2); font-style: italic; }
+    .hero-sub { font-size: 1rem; color: var(--muted); line-height: 1.7; max-width: 420px; margin-bottom: 36px; }
+    .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+    .hero-cta-primary { background: var(--accent); color: #fff; padding: 12px 28px; border-radius: 8px; font-size: 0.88rem; font-weight: 600; text-decoration: none; transition: opacity 0.2s; }
+    .hero-cta-primary:hover { opacity: 0.85; }
+    .hero-cta-secondary { background: transparent; color: var(--accent); padding: 12px 28px; border-radius: 8px; font-size: 0.88rem; font-weight: 600; text-decoration: none; border: 1.5px solid var(--border-dark); transition: border-color 0.2s; }
+    .hero-cta-secondary:hover { border-color: var(--accent); }
+    .hero-right { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .hero-cat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px 22px; cursor: pointer; transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s; text-decoration: none; display: block; }
+    .hero-cat-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.09); transform: translateY(-3px); border-color: var(--border-dark); }
+    .hero-cat-card.span2 { grid-column: span 2; display: flex; align-items: center; gap: 20px; }
+    .cat-icon { font-size: 2.2rem; margin-bottom: 12px; display: block; }
+    .hero-cat-card.span2 .cat-icon { margin-bottom: 0; font-size: 2rem; }
+    .cat-label { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 600; color: var(--accent); margin-bottom: 4px; }
+    .cat-sub { font-size: 0.75rem; color: var(--mid); }
+
+    /* MARQUEE */
+    .marquee-wrap { overflow: hidden; padding: 16px 0; background: var(--accent); }
+    .marquee-track { display: flex; gap: 48px; white-space: nowrap; animation: marquee 24s linear infinite; }
+    .marquee-item { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.7); display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .marquee-item::before { content: '◆'; color: var(--accent2); font-size: 0.45rem; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* PRODUCTS */
+    .products-section { max-width: 1300px; margin: 0 auto; padding: 64px 48px; }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+    .item-count { font-size: 0.78rem; font-weight: 500; color: var(--mid); background: var(--bg); border: 1px solid var(--border); padding: 5px 14px; border-radius: 20px; }
+    .filter-tabs { display: flex; gap: 8px; margin-bottom: 36px; flex-wrap: wrap; }
+    .filter-btn { font-size: 0.8rem; font-weight: 500; padding: 8px 20px; border-radius: 24px; background: var(--surface); border: 1.5px solid var(--border); color: var(--muted); cursor: pointer; transition: all 0.18s; font-family: 'Inter', sans-serif; }
+    .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 24px; }
+
+    /* PRODUCT CARD */
+    .product-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s; animation: fadeUp 0.5s ease both; position: relative; }
+    .product-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.1); transform: translateY(-4px); border-color: var(--border-dark); }
+    .card-img-wrap { width: 100%; height: 200px; overflow: hidden; background: var(--bg); display: flex; align-items: center; justify-content: center; }
+    .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+    .product-card:hover .card-img-wrap img { transform: scale(1.04); }
+    .card-img-placeholder { width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; font-size: 4.5rem; background: var(--bg); }
+    .card-badge { position: absolute; top: 14px; left: 14px; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.05em; padding: 4px 10px; border-radius: 20px; z-index: 1; }
+    .card-badge.new { background: #d1fae5; color: #065f46; }
+    .card-badge.used { background: #fef3c7; color: #92400e; }
+    .card-body { padding: 20px 22px 22px; }
+    .card-cat-tag { display: inline-block; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 10px; border-radius: 4px; margin-bottom: 10px; background: var(--bg); color: var(--muted); }
+    .card-cat-tag.drone { background: var(--tag-drone); color: var(--tag-drone-text); }
+    .card-cat-tag.gaming { background: var(--tag-gaming); color: var(--tag-gaming-text); }
+    .card-cat-tag.golf { background: var(--tag-golf); color: var(--tag-golf-text); }
+    .card-name { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 600; color: var(--accent); line-height: 1.3; margin-bottom: 8px; }
+    .card-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.6; margin-bottom: 18px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--border); }
+    .card-price { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+    .enquire-btn { font-size: 0.78rem; font-weight: 600; padding: 9px 18px; border-radius: 8px; background: var(--accent); color: #fff; border: none; cursor: pointer; transition: opacity 0.2s; font-family: 'Inter', sans-serif; text-decoration: none; display: inline-block; }
+    .enquire-btn:hover { opacity: 0.82; }
+    .product-card.hidden { display: none; }
+    .empty-state { grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--muted); font-size: 0.9rem; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* REVIEWS */
+    .reviews-section { background: var(--surface); border-top: 1px solid var(--border); padding: 72px 48px; }
+    .reviews-inner { max-width: 1300px; margin: 0 auto; }
+    .reviews-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 40px; flex-wrap: wrap; gap: 20px; }
+    .reviews-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent2); margin-bottom: 8px; }
+    .reviews-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+    .reviews-summary { display: flex; align-items: center; gap: 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px 24px; }
+    .summary-score { font-family: 'Playfair Display', serif; font-size: 2.8rem; font-weight: 700; color: var(--accent); line-height: 1; }
+    .summary-stars { color: #f59e0b; font-size: 1.1rem; letter-spacing: 2px; margin-bottom: 4px; }
+    .summary-count { font-size: 0.75rem; color: var(--mid); font-weight: 500; }
+    .summary-divider { width: 1px; height: 40px; background: var(--border); }
+    .summary-ebay-label { font-size: 0.7rem; color: var(--mid); font-weight: 500; margin-bottom: 4px; }
+    .summary-ebay-badge { font-size: 0.78rem; font-weight: 700; color: var(--accent2); background: #fdf3e3; border: 1px solid #f0d9a8; padding: 3px 10px; border-radius: 20px; display: inline-block; }
+    .reviews-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+    .review-card { background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 24px; transition: box-shadow 0.2s, transform 0.2s; }
+    .review-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.07); transform: translateY(-2px); }
+    .review-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .review-stars { color: #f59e0b; font-size: 0.95rem; letter-spacing: 2px; }
+    .review-date { font-size: 0.7rem; color: var(--mid); font-weight: 500; }
+    .review-text { font-size: 0.88rem; color: var(--muted); line-height: 1.65; margin-bottom: 18px; font-style: italic; }
+    .review-text::before { content: '\201C'; }
+    .review-text::after { content: '\201D'; }
+    .review-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid var(--border); }
+    .review-buyer { display: flex; align-items: center; gap: 10px; }
+    .review-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .review-buyer-name { font-size: 0.78rem; font-weight: 600; color: var(--accent); }
+    .review-item-tag { font-size: 0.68rem; font-weight: 600; color: var(--mid); background: var(--surface); border: 1px solid var(--border); padding: 3px 9px; border-radius: 20px; max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .reviews-cta { text-align: center; margin-top: 40px; }
+    .reviews-cta a { font-size: 0.84rem; font-weight: 600; color: var(--accent2); text-decoration: none; border-bottom: 1.5px solid var(--accent2); padding-bottom: 2px; transition: opacity 0.2s; }
+    .reviews-cta a:hover { opacity: 0.7; }
+
+    /* CONTACT */
+    .contact-section { background: var(--accent); padding: 80px 48px; text-align: center; }
+    .contact-section h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700; color: #fff; margin-bottom: 14px; }
+    .contact-section h2 em { color: var(--accent2); font-style: italic; }
+    .contact-section p { font-size: 1rem; color: rgba(255,255,255,0.65); margin-bottom: 40px; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.7; }
+    .contact-methods { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .contact-pill { font-size: 0.84rem; font-weight: 600; padding: 13px 28px; border-radius: 8px; text-decoration: none; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+    .contact-pill.primary { background: #fff; color: var(--accent); }
+    .contact-pill.primary:hover { background: var(--accent2); color: #fff; }
+    .contact-pill.secondary { border: 1.5px solid rgba(255,255,255,0.3); color: #fff; }
+    .contact-pill.secondary:hover { background: rgba(255,255,255,0.1); }
+
+    /* FOOTER */
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 28px 48px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-copy { font-size: 0.78rem; color: var(--mid); }
+
+    /* ADMIN PANEL */
+    .admin-panel { background: var(--surface); border-top: 2px dashed var(--border-dark); padding: 48px; display: none; }
+    .admin-panel.visible { display: block; }
+    .admin-inner { max-width: 800px; margin: 0 auto; }
+    .admin-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+    .admin-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 28px; }
+    .admin-form { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; }
+    .admin-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .admin-field { display: flex; flex-direction: column; gap: 6px; }
+    .admin-field label { font-size: 0.75rem; font-weight: 600; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+    .admin-field input, .admin-field select, .admin-field textarea { font-family: 'Inter', sans-serif; font-size: 0.85rem; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); transition: border-color 0.2s; outline: none; }
+    .admin-field input:focus, .admin-field select:focus, .admin-field textarea:focus { border-color: var(--accent); }
+    .admin-field textarea { min-height: 80px; resize: vertical; }
+    .admin-add-btn { background: var(--accent); color: #fff; border: none; padding: 12px 28px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: opacity 0.2s; align-self: flex-start; }
+    .admin-add-btn:hover { opacity: 0.85; }
+    .admin-listings { display: flex; flex-direction: column; gap: 10px; }
+    .admin-listing-row { display: flex; align-items: center; gap: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; }
+    .admin-listing-img { width: 48px; height: 48px; border-radius: 6px; object-fit: cover; background: var(--border); flex-shrink: 0; }
+    .admin-listing-info { flex: 1; min-width: 0; }
+    .admin-listing-name { font-size: 0.85rem; font-weight: 600; color: var(--accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .admin-listing-meta { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+    .admin-delete-btn { background: none; border: 1px solid var(--border); color: var(--muted); padding: 6px 12px; border-radius: 6px; font-size: 0.72rem; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; flex-shrink: 0; }
+    .admin-delete-btn:hover { border-color: #ef4444; color: #ef4444; }
+
+    /* MODAL */
+    .modal-bg { position: fixed; inset: 0; background: rgba(26,26,46,0.55); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.25s; backdrop-filter: blur(4px); }
+    .modal-bg.open { opacity: 1; pointer-events: all; }
+    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 40px; max-width: 460px; width: 90%; animation: fadeUp 0.3s ease; position: relative; box-shadow: 0 24px 64px rgba(0,0,0,0.15); }
+    .modal-close { position: absolute; top: 16px; right: 18px; background: var(--bg); border: 1px solid var(--border); color: var(--muted); width: 32px; height: 32px; border-radius: 50%; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .modal-close:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .modal h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+    .modal p { font-size: 0.88rem; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
+    .modal-actions { display: flex; gap: 12px; }
+    .modal-btn { font-size: 0.82rem; font-weight: 600; padding: 11px 22px; border-radius: 8px; cursor: pointer; transition: all 0.2s; text-decoration: none; display: inline-block; font-family: 'Inter', sans-serif; }
+    .modal-btn.primary { background: var(--accent); color: #fff; border: none; }
+    .modal-btn.primary:hover { opacity: 0.85; }
+    .modal-btn.secondary { background: transparent; border: 1.5px solid var(--border-dark); color: var(--muted); }
+    .modal-btn.secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    @media (max-width: 768px) {
+      header { padding: 0 20px; }
+      .hero { grid-template-columns: 1fr; gap: 48px; padding: 48px 20px; }
+      .hero-right { display: none; }
+      .products-section, .reviews-section, .admin-panel { padding: 48px 20px; }
+      .contact-section { padding: 60px 20px; }
+      footer { padding: 24px 20px; flex-direction: column; gap: 10px; text-align: center; }
+      nav .ebay-btn, nav .contact-btn { display: none; }
+      .reviews-header { flex-direction: column; align-items: flex-start; }
+      .admin-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a class="logo" href="#"><span class="logo-dot"></span>EHTF Sells</a>
+    <nav>
+      <div class="nav-dropdown" id="shopDropdown">
+        <button class="nav-dropdown-trigger" onclick="toggleDropdown()">Shop <span class="chevron"></span></button>
+        <div class="nav-dropdown-menu">
+          <a href="#products" onclick="filterFromNav('drone'); closeDropdown();"><span class="dd-icon">🚁</span> Drones</a>
+          <a href="#products" onclick="filterFromNav('gaming'); closeDropdown();"><span class="dd-icon">🎮</span> Xbox</a>
+          <a href="#products" onclick="filterFromNav('golf'); closeDropdown();"><span class="dd-icon">⛳</span> Bushnell's</a>
+          <a href="#products" onclick="filterFromNav('all'); closeDropdown();"><span class="dd-icon">◈</span> All Items</a>
+        </div>
+      </div>
+      <a href="https://www.ebay.co.uk/usr/elliohaydo_0" target="_blank" rel="noopener" class="ebay-btn">eBay Store</a>
+      <a href="#contact" class="contact-btn">Enquire</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-tag">✦ UK Based · Fast Dispatch</div>
+      <h1>Premium Tech &amp; Golf,<br><em>Fairly Priced.</em></h1>
+      <p class="hero-sub">Drones, Xbox consoles, Bushnell rangefinders and more. Every item carefully checked and competitively priced. Buy with confidence.</p>
+      <div class="hero-ctas">
+        <a href="#products" class="hero-cta-primary">Browse All Items</a>
+        <a href="https://www.ebay.co.uk/usr/elliohaydo_0" target="_blank" rel="noopener" class="hero-cta-secondary">View eBay Store</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <a class="hero-cat-card" href="#products" onclick="filterFromNav('drone')">
+        <span class="cat-icon">🚁</span>
+        <div class="cat-label">Drones</div>
+        <div class="cat-sub">DJI &amp; more</div>
+      </a>
+      <a class="hero-cat-card" href="#products" onclick="filterFromNav('gaming')">
+        <span class="cat-icon">🎮</span>
+        <div class="cat-label">Xbox</div>
+        <div class="cat-sub">Consoles &amp; controllers</div>
+      </a>
+      <a class="hero-cat-card span2" href="#products" onclick="filterFromNav('golf')">
+        <span class="cat-icon">⛳</span>
+        <div>
+          <div class="cat-label">Bushnell's</div>
+          <div class="cat-sub">Golf rangefinders — Pro X3+, Tour V6 Shift &amp; more</div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span class="marquee-item">DJI Drones</span>
+      <span class="marquee-item">Xbox Consoles</span>
+      <span class="marquee-item">Bushnell Rangefinders</span>
+      <span class="marquee-item">UK Based Seller</span>
+      <span class="marquee-item">Fast Dispatch</span>
+      <span class="marquee-item">Competitive Prices</span>
+      <span class="marquee-item">All Items Checked</span>
+      <span class="marquee-item">Enquire Any Time</span>
+      <span class="marquee-item">DJI Drones</span>
+      <span class="marquee-item">Xbox Consoles</span>
+      <span class="marquee-item">Bushnell Rangefinders</span>
+      <span class="marquee-item">UK Based Seller</span>
+      <span class="marquee-item">Fast Dispatch</span>
+      <span class="marquee-item">Competitive Prices</span>
+      <span class="marquee-item">All Items Checked</span>
+      <span class="marquee-item">Enquire Any Time</span>
+    </div>
+  </div>
+
+  <section class="products-section" id="products">
+    <div class="section-header">
+      <div class="section-title">All Listings</div>
+      <div class="item-count" id="count-display">0 items</div>
+    </div>
+    <div class="filter-tabs">
+      <button class="filter-btn active" onclick="filterProducts('all', this)">All Items</button>
+      <button class="filter-btn" onclick="filterProducts('drone', this)">🚁 Drones</button>
+      <button class="filter-btn" onclick="filterProducts('gaming', this)">🎮 Xbox</button>
+      <button class="filter-btn" onclick="filterProducts('golf', this)">⛳ Bushnell's</button>
+    </div>
+    <div class="product-grid" id="grid">
+      <div class="empty-state">No listings yet — add items using the admin panel below.</div>
+    </div>
+  </section>
+
+  <section class="reviews-section">
+    <div class="reviews-inner">
+      <div class="reviews-header">
+        <div>
+          <div class="reviews-label">eBay Feedback</div>
+          <div class="reviews-title">What Buyers Say</div>
+        </div>
+        <div class="reviews-summary">
+          <div class="summary-score">5.0</div>
+          <div>
+            <div class="summary-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <div class="summary-count">100% positive feedback</div>
+          </div>
+          <div class="summary-divider"></div>
+          <div>
+            <div class="summary-ebay-label">Verified via</div>
+            <div class="summary-ebay-badge">eBay Seller</div>
+          </div>
+        </div>
+      </div>
+      <div class="reviews-grid">
+        <div class="review-card">
+          <div class="review-card-top"><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="review-date">May 2026</div></div>
+          <div class="review-text">Everything as described, fast delivery. Would purchase from this eBay seller again.</div>
+          <div class="review-footer"><div class="review-buyer"><div class="review-avatar">AM</div><div class="review-buyer-name">a***k</div></div><div class="review-item-tag">Verified Purchase</div></div>
+        </div>
+        <div class="review-card">
+          <div class="review-card-top"><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="review-date">May 2026</div></div>
+          <div class="review-text">Seller offered a quality product at a great price. Arrived in good time. Would buy from again.</div>
+          <div class="review-footer"><div class="review-buyer"><div class="review-avatar">WA</div><div class="review-buyer-name">w***0</div></div><div class="review-item-tag">Verified Purchase</div></div>
+        </div>
+        <div class="review-card">
+          <div class="review-card-top"><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="review-date">Past year</div></div>
+          <div class="review-text">Fantastic. Arrived super quickly and super safely packaged. Exactly as described and brilliant value for money.</div>
+          <div class="review-footer"><div class="review-buyer"><div class="review-avatar">BO</div><div class="review-buyer-name">b***o</div></div><div class="review-item-tag">Verified Purchase</div></div>
+        </div>
+        <div class="review-card">
+          <div class="review-card-top"><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="review-date">Past year</div></div>
+          <div class="review-text">Excellent ebayer — went above and beyond to get club to me before weekend. Club as described, packaging very good.</div>
+          <div class="review-footer"><div class="review-buyer"><div class="review-avatar">9M</div><div class="review-buyer-name">9***m</div></div><div class="review-item-tag">Callaway Driver</div></div>
+        </div>
+        <div class="review-card">
+          <div class="review-card-top"><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="review-date">Past year</div></div>
+          <div class="review-text">Great, as described and fair price. All good.</div>
+          <div class="review-footer"><div class="review-buyer"><div class="review-avatar">H0</div><div class="review-buyer-name">h***0</div></div><div class="review-item-tag">Bushnell Tour X</div></div>
+        </div>
+        <div class="review-card">
+          <div class="review-card-top"><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="review-date">Past year</div></div>
+          <div class="review-text">Goods arrived safely and promptly. All OK. Thanks.</div>
+          <div class="review-footer"><div class="review-buyer"><div class="review-avatar">GM</div><div class="review-buyer-name">g***m</div></div><div class="review-item-tag">Bushnell Pro X3</div></div>
+        </div>
+        <div class="review-card">
+          <div class="review-card-top"><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="review-date">Past year</div></div>
+          <div class="review-text">Great item as advertised, thanks.</div>
+          <div class="review-footer"><div class="review-buyer"><div class="review-avatar">DH</div><div class="review-buyer-name">d***h</div></div><div class="review-item-tag">Bushnell Pro XE</div></div>
+        </div>
+        <div class="review-card">
+          <div class="review-card-top"><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="review-date">Past year</div></div>
+          <div class="review-text">Well packaged, fast delivery, great quality item.</div>
+          <div class="review-footer"><div class="review-buyer"><div class="review-avatar">D2</div><div class="review-buyer-name">d***2</div></div><div class="review-item-tag">Verified Purchase</div></div>
+        </div>
+        <div class="review-card">
+          <div class="review-card-top"><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="review-date">Past year</div></div>
+          <div class="review-text">Great item, fast delivery, great seller.</div>
+          <div class="review-footer"><div class="review-buyer"><div class="review-avatar">63</div><div class="review-buyer-name">6***3</div></div><div class="review-item-tag">Verified Purchase</div></div>
+        </div>
+      </div>
+      <div class="reviews-cta"><a href="https://www.ebay.co.uk/usr/elliohaydo_0" target="_blank" rel="noopener">View all reviews on eBay &#8594;</a></div>
+    </div>
+  </section>
+
+  <section class="contact-section" id="contact">
+    <h2>Got a question? <em>Get in touch.</em></h2>
+    <p>Enquire about any item, negotiate a price, or ask about bundling. We aim to respond same day.</p>
+    <div class="contact-methods">
+      <a href="mailto:elliothaydon01@gmail.com" class="contact-pill primary">&#9993; Email Us</a>
+      <a href="https://www.ebay.co.uk/usr/elliohaydo_0" target="_blank" rel="noopener" class="contact-pill secondary">&#128722; View eBay Store</a>
+      <a href="https://instagram.com" target="_blank" class="contact-pill secondary">&#128242; Instagram DM</a>
+    </div>
+  </section>
+
+  <!-- ADMIN PANEL -->
+  <div class="admin-panel" id="adminPanel">
+    <div class="admin-inner">
+      <div class="admin-title">&#128274; Admin — Manage Listings</div>
+      <div class="admin-sub">Add your eBay listings manually. They'll appear on the site instantly and save automatically.</div>
+
+      <div class="admin-form">
+        <div class="admin-row">
+          <div class="admin-field">
+            <label>Item Title</label>
+            <input type="text" id="adminTitle" placeholder="e.g. DJI Mini 4 Pro — Like New" />
+          </div>
+          <div class="admin-field">
+            <label>Price (£)</label>
+            <input type="number" id="adminPrice" placeholder="e.g. 650" step="0.01" />
+          </div>
+        </div>
+        <div class="admin-row">
+          <div class="admin-field">
+            <label>Category</label>
+            <select id="adminCat">
+              <option value="drone">🚁 Drone</option>
+              <option value="gaming">🎮 Xbox / Gaming</option>
+              <option value="golf">⛳ Bushnell's / Golf</option>
+              <option value="other">📦 Other</option>
+            </select>
+          </div>
+          <div class="admin-field">
+            <label>Condition</label>
+            <select id="adminCondition">
+              <option value="used">Used</option>
+              <option value="new">New</option>
+            </select>
+          </div>
+        </div>
+        <div class="admin-field">
+          <label>eBay Listing URL</label>
+          <input type="url" id="adminUrl" placeholder="https://www.ebay.co.uk/itm/..." />
+        </div>
+        <div class="admin-field">
+          <label>Image URL (optional — right-click your eBay listing image > Copy image address)</label>
+          <input type="url" id="adminImg" placeholder="https://i.ebayimg.com/..." />
+        </div>
+        <div class="admin-field">
+          <label>Description (optional)</label>
+          <textarea id="adminDesc" placeholder="Brief description of the item..."></textarea>
+        </div>
+        <button class="admin-add-btn" onclick="addListing()">+ Add Listing</button>
+      </div>
+
+      <div id="adminListings" class="admin-listings"></div>
+    </div>
+  </div>
+
+  <footer>
+    <a class="logo" href="#"><span class="logo-dot"></span>EHTF Sells</a>
+    <div class="footer-copy">&#169; 2026 EHTF Sells &middot; UK Based &middot; <span style="cursor:pointer;text-decoration:underline;" onclick="toggleAdmin()">Admin</span></div>
+  </footer>
+
+  <div class="modal-bg" id="modalBg" onclick="closeModalOnBg(event)">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">&#215;</button>
+      <h3 id="modalTitle">Item</h3>
+      <p id="modalBody">Interested? Get in touch and we'll confirm availability and arrange payment.</p>
+      <div class="modal-actions">
+        <a id="modalEbay" href="#" target="_blank" class="modal-btn primary">View on eBay</a>
+        <a id="modalEmail" href="mailto:elliothaydon01@gmail.com" class="modal-btn secondary">Email Enquiry</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── STORAGE ──
+    let cachedListings = null;
+
+    async function getListings() {
+      if (cachedListings !== null) return cachedListings;
+      try {
+        const res = await fetch('/api/listings');
+        cachedListings = await res.json();
+        return cachedListings;
+      } catch(e) {
+        return [];
+      }
+    }
+
+    async function saveListings(listings) {
+      cachedListings = listings;
+      await fetch('/api/listings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: 'bushnell26', listings })
+      });
+    }
+
+    // ── CATEGORY ──
+    function detectCategory(title) {
+      const t = title.toLowerCase();
+      if (t.includes('dji') || t.includes('drone') || t.includes('mavic') || t.includes('fpv')) return 'drone';
+      if (t.includes('xbox') || t.includes('controller') || t.includes('console') || t.includes('gaming')) return 'gaming';
+      if (t.includes('bushnell') || t.includes('rangefinder') || t.includes('golf') || t.includes('tour v') || t.includes('pro x')) return 'golf';
+      return 'other';
+    }
+
+    function getCatTag(cat) {
+      const labels = { drone: 'Drone', gaming: 'Xbox', golf: "Bushnell's", other: 'Other' };
+      return `<div class="card-cat-tag ${cat}">${labels[cat] || cat}</div>`;
+    }
+
+    function getEmoji(cat) {
+      return { drone: '🚁', gaming: '🎮', golf: '⛳', other: '📦' }[cat] || '📦';
+    }
+
+    // ── RENDER ──
+    async function renderGrid() {
+      const listings = await getListings();
+      const grid = document.getElementById('grid');
+      const count = document.getElementById('count-display');
+
+      if (!listings.length) {
+        grid.innerHTML = '<div class="empty-state">No listings yet — add items using the admin panel below.</div>';
+        count.textContent = '0 items';
+        return;
+      }
+
+      grid.innerHTML = '';
+      listings.forEach((item, i) => {
+        const cat = item.cat || detectCategory(item.title);
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.dataset.cat = cat;
+        card.style.animationDelay = `${i * 0.05}s`;
+        const safeTitle = (item.title || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        const price = parseFloat(item.price || 0).toFixed(2);
+
+        card.innerHTML = `
+          ${item.img
+            ? `<div class="card-img-wrap"><img src="${item.img}" alt="${item.title}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\"card-img-placeholder\\">${getEmoji(cat)}</div>'"/></div>`
+            : `<div class="card-img-placeholder">${getEmoji(cat)}</div>`
+          }
+          <div class="card-badge ${item.condition || 'used'}">${item.condition === 'new' ? 'New' : 'Used'}</div>
+          <div class="card-body">
+            ${getCatTag(cat)}
+            <div class="card-name">${item.title}</div>
+            ${item.desc ? `<div class="card-desc">${item.desc}</div>` : ''}
+            <div class="card-footer">
+              <div class="card-price">£${price}</div>
+              <button class="enquire-btn" onclick="openModal('${safeTitle}', '£${price}', '${item.url || ''}')">View Item</button>
+            </div>
+          </div>`;
+        grid.appendChild(card);
+      });
+
+      count.textContent = `${listings.length} item${listings.length !== 1 ? 's' : ''}`;
+      applyFilter(currentFilter);
+    }
+
+    async function renderAdminList() {
+      const listings = await getListings();
+      const container = document.getElementById('adminListings');
+      if (!listings.length) { container.innerHTML = ''; return; }
+
+      container.innerHTML = listings.map((item, i) => `
+        <div class="admin-listing-row">
+          ${item.img ? `<img class="admin-listing-img" src="${item.img}" onerror="this.style.display='none'"/>` : `<div class="admin-listing-img" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;">${getEmoji(item.cat)}</div>`}
+          <div class="admin-listing-info">
+            <div class="admin-listing-name">${item.title}</div>
+            <div class="admin-listing-meta">£${parseFloat(item.price).toFixed(2)} · ${item.condition} · ${item.cat}</div>
+          </div>
+          <button class="admin-delete-btn" onclick="deleteListing(${i})">Remove</button>
+        </div>`).join('');
+    }
+
+    // ── ADMIN ──
+    async function addListing() {
+      const title = document.getElementById('adminTitle').value.trim();
+      const price = document.getElementById('adminPrice').value.trim();
+      const cat = document.getElementById('adminCat').value;
+      const condition = document.getElementById('adminCondition').value;
+      const url = document.getElementById('adminUrl').value.trim();
+      const img = document.getElementById('adminImg').value.trim();
+      const desc = document.getElementById('adminDesc').value.trim();
+
+      if (!title || !price) { alert('Please enter at least a title and price.'); return; }
+
+      const listings = await getListings();
+      listings.unshift({ title, price, cat, condition, url, img, desc, added: Date.now() });
+      await saveListings(listings);
+
+      document.getElementById('adminTitle').value = '';
+      document.getElementById('adminPrice').value = '';
+      document.getElementById('adminUrl').value = '';
+      document.getElementById('adminImg').value = '';
+      document.getElementById('adminDesc').value = '';
+
+      await renderGrid();
+      await renderAdminList();
+    }
+
+    async function deleteListing(index) {
+      if (!confirm('Remove this listing?')) return;
+      const listings = await getListings();
+      listings.splice(index, 1);
+      await saveListings(listings);
+      cachedListings = null;
+      await renderGrid();
+      await renderAdminList();
+    }
+
+    const ADMIN_PASSWORD = 'bushnell26';
+    let adminUnlocked = false;
+
+    function toggleAdmin() {
+      if (!adminUnlocked) {
+        const entered = prompt('Enter admin password:');
+        if (entered !== ADMIN_PASSWORD) {
+          alert('Incorrect password.');
+          return;
+        }
+        adminUnlocked = true;
+      }
+      const panel = document.getElementById('adminPanel');
+      panel.classList.toggle('visible');
+      if (panel.classList.contains('visible')) {
+        panel.scrollIntoView({ behavior: 'smooth' });
+        renderAdminList(); // async, no await needed here
+      }
+    }
+
+    // ── DROPDOWN ──
+    function toggleDropdown() { document.getElementById('shopDropdown').classList.toggle('open'); }
+    function closeDropdown() { document.getElementById('shopDropdown').classList.remove('open'); }
+    document.addEventListener('click', e => { if (!document.getElementById('shopDropdown').contains(e.target)) closeDropdown(); });
+
+    // ── FILTER ──
+    let currentFilter = 'all';
+
+    function filterFromNav(cat) {
+      const btns = document.querySelectorAll('.filter-btn');
+      const map = { all: 0, drone: 1, gaming: 2, golf: 3 };
+      btns.forEach((b, i) => b.classList.toggle('active', i === map[cat]));
+      applyFilter(cat);
+    }
+
+    function filterProducts(cat, btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyFilter(cat);
+    }
+
+    function applyFilter(cat) {
+      currentFilter = cat;
+      const cards = document.querySelectorAll('.product-card');
+      let visible = 0;
+      cards.forEach(c => {
+        const match = cat === 'all' || c.dataset.cat === cat;
+        c.classList.toggle('hidden', !match);
+        if (match) visible++;
+      });
+      if (cards.length) document.getElementById('count-display').textContent = `${visible} item${visible !== 1 ? 's' : ''}`;
+    }
+
+    // ── MODAL ──
+    function openModal(name, price, url) {
+      document.getElementById('modalTitle').textContent = name;
+      document.getElementById('modalBody').textContent = `Listed at ${price}. Click below to view the full listing on eBay or send an email enquiry.`;
+      document.getElementById('modalEbay').href = url || 'https://www.ebay.co.uk/usr/elliohaydo_0';
+      document.getElementById('modalEmail').href = `mailto:elliothaydon01@gmail.com?subject=Enquiry: ${name}`;
+      document.getElementById('modalBg').classList.add('open');
+    }
+
+    function closeModal() { document.getElementById('modalBg').classList.remove('open'); }
+    function closeModalOnBg(e) { if (e.target === document.getElementById('modalBg')) closeModal(); }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    // ── INIT ──
+    renderGrid();
+  </script>
+</body>
+</html>
