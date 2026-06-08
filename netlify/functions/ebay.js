@@ -14,13 +14,16 @@ exports.handler = async function(event) {
   }
 
   try {
-    const APP_ID = 'ElliotHa-EHTFSell-PRD-d9968b8a6-1379ff01';
-    
-    // First get an OAuth app token
+    const APP_ID = process.env.EBAY_APP_ID;
+    const CERT_ID = process.env.EBAY_CERT_ID;
+
+    console.log('APP_ID present:', !!APP_ID);
+    console.log('CERT_ID present:', !!CERT_ID);
+
+    const credentials = Buffer.from(`${APP_ID}:${CERT_ID}`).toString('base64');
+    const postData = 'grant_type=client_credentials&scope=https%3A%2F%2Fapi.ebay.com%2Foauth%2Fapi_scope';
+
     const tokenResponse = await new Promise((resolve, reject) => {
-      const credentials = Buffer.from(`${APP_ID}:ElliotHa-EHTFSell-PRD-d9968b8a6-1379ff01`).toString('base64');
-      const postData = 'grant_type=client_credentials&scope=https%3A%2F%2Fapi.ebay.com%2Foauth%2Fapi_scope';
-      
       const options = {
         hostname: 'api.ebay.com',
         path: '/identity/v1/oauth2/token',
@@ -35,23 +38,24 @@ exports.handler = async function(event) {
       const req = https.request(options, (res) => {
         let data = '';
         res.on('data', chunk => { data += chunk; });
-        res.on('end', () => resolve(JSON.parse(data)));
+        res.on('end', () => {
+          console.log('Token status:', res.statusCode);
+          console.log('Token response:', data.substring(0, 300));
+          try { resolve(JSON.parse(data)); } catch(e) { reject(new Error('Token parse error: ' + data)); }
+        });
       });
       req.on('error', reject);
       req.write(postData);
       req.end();
     });
 
-    console.log('Token response:', JSON.stringify(tokenResponse).substring(0, 200));
-
     if (!tokenResponse.access_token) {
       throw new Error('No access token: ' + JSON.stringify(tokenResponse));
     }
 
-    // Search for seller's listings using Browse API
     const searchResponse = await new Promise((resolve, reject) => {
       const path = '/buy/browse/v1/item_summary/search?seller_username=elliohaydo_0&limit=50';
-      
+
       const options = {
         hostname: 'api.ebay.com',
         path: path,
@@ -68,8 +72,8 @@ exports.handler = async function(event) {
         console.log('Browse API status:', res.statusCode);
         res.on('data', chunk => { data += chunk; });
         res.on('end', () => {
-          console.log('Browse API response:', data.substring(0, 500));
-          resolve({ status: res.statusCode, data: data });
+          console.log('Browse response:', data.substring(0, 500));
+          resolve(data);
         });
       });
       req.on('error', reject);
@@ -82,7 +86,7 @@ exports.handler = async function(event) {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json'
       },
-      body: searchResponse.data
+      body: searchResponse
     };
 
   } catch (err) {
