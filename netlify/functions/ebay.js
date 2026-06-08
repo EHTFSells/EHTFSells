@@ -17,9 +17,6 @@ exports.handler = async function(event) {
     const APP_ID = process.env.EBAY_APP_ID;
     const CERT_ID = process.env.EBAY_CERT_ID;
 
-    console.log('APP_ID present:', !!APP_ID);
-    console.log('CERT_ID present:', !!CERT_ID);
-
     const credentials = Buffer.from(`${APP_ID}:${CERT_ID}`).toString('base64');
     const postData = 'grant_type=client_credentials&scope=https%3A%2F%2Fapi.ebay.com%2Foauth%2Fapi_scope';
 
@@ -34,13 +31,10 @@ exports.handler = async function(event) {
           'Content-Length': Buffer.byteLength(postData)
         }
       };
-
       const req = https.request(options, (res) => {
         let data = '';
         res.on('data', chunk => { data += chunk; });
         res.on('end', () => {
-          console.log('Token status:', res.statusCode);
-          console.log('Token response:', data.substring(0, 300));
           try { resolve(JSON.parse(data)); } catch(e) { reject(new Error('Token parse error: ' + data)); }
         });
       });
@@ -53,8 +47,9 @@ exports.handler = async function(event) {
       throw new Error('No access token: ' + JSON.stringify(tokenResponse));
     }
 
+    // Use seller filter with a broad search query
     const searchResponse = await new Promise((resolve, reject) => {
-      const path = '/buy/browse/v1/item_summary/search?seller_username=elliohaydo_0&limit=50';
+      const path = '/buy/browse/v1/item_summary/search?q=drone+xbox+bushnell&filter=sellers%3Aelliohaydo_0&limit=50';
 
       const options = {
         hostname: 'api.ebay.com',
@@ -72,7 +67,7 @@ exports.handler = async function(event) {
         console.log('Browse API status:', res.statusCode);
         res.on('data', chunk => { data += chunk; });
         res.on('end', () => {
-          console.log('Browse response:', data.substring(0, 500));
+          console.log('Browse response:', data.substring(0, 800));
           resolve(data);
         });
       });
