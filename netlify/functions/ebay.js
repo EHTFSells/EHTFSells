@@ -1,38 +1,47 @@
-const https = require('https');
-
 exports.handler = async function(event) {
-  const { callName, body } = JSON.parse(event.body);
-  const APP_ID = 'ElliotHa-EHTFSell-PRD-d9968b8a6-1379ff01';
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS'
+      },
+      body: ''
+    };
+  }
 
-  const options = {
-    hostname: 'api.ebay.com',
-    path: '/ws/api.dll',
-    method: 'POST',
-    headers: {
-      'Content-Type': 'text/xml',
-      'X-EBAY-API-SITEID': '3',
-      'X-EBAY-API-COMPATIBILITY-LEVEL': '967',
-      'X-EBAY-API-CALL-NAME': callName,
-      'X-EBAY-API-APP-NAME': APP_ID,
-    }
-  };
+  try {
+    const { callName, body } = JSON.parse(event.body);
+    const APP_ID = 'ElliotHa-EHTFSell-PRD-d9968b8a6-1379ff01';
 
-  return new Promise((resolve) => {
-    const req = https.request(options, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => {
-        resolve({
-          statusCode: 200,
-          headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'text/xml' },
-          body: data
-        });
-      });
+    const response = await fetch('https://api.ebay.com/ws/api.dll', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/xml',
+        'X-EBAY-API-SITEID': '3',
+        'X-EBAY-API-COMPATIBILITY-LEVEL': '967',
+        'X-EBAY-API-CALL-NAME': callName,
+        'X-EBAY-API-APP-NAME': APP_ID,
+      },
+      body: body
     });
-    req.on('error', (e) => {
-      resolve({ statusCode: 500, body: JSON.stringify({ error: e.message }) });
-    });
-    req.write(body);
-    req.end();
-  });
+
+    const text = await response.text();
+
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'text/xml'
+      },
+      body: text
+    };
+  } catch (err) {
+    return {
+      statusCode: 500,
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({ error: err.message })
+    };
+  }
 };
